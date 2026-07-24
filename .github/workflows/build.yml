@@ -29,6 +29,7 @@ jobs:
       - name: Verify project structure
         run: |
           echo "===== PROJECT STRUCTURE ====="
+          pwd
           ls -R
 
       - name: Set up Java 17
@@ -42,20 +43,33 @@ jobs:
 
       - name: Build Debug APK
         run: |
+          ./gradlew clean
           ./gradlew assembleDebug --stacktrace
 
-          echo "===== CURRENT DIRECTORY ====="
-          pwd
+          echo ""
+          echo "===== GRADLE PROJECTS ====="
+          ./gradlew projects
 
-          echo "===== SEARCH APK ====="
+          echo ""
+          echo "===== BUILD DIRECTORIES ====="
+          find . -type d -name build
+
+          echo ""
+          echo "===== APK FILES ====="
           find . -type f -name "*.apk"
 
-          echo "===== APP BUILD FOLDER ====="
+          echo ""
+          echo "===== APP DIRECTORY ====="
+          ls -R app || true
+
+          echo ""
+          echo "===== APP BUILD DIRECTORY ====="
           ls -R app/build || true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: "**/*.apk"
+          path: |
+            **/*.apk
           if-no-files-found: error
